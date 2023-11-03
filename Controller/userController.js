@@ -1,5 +1,3 @@
-const db = require('../Server')
-const dbConfig = require('../Utilities/dbConfig')
 
 const userDetail = (req, res) => {
     // const sql = 'SELECT * FROM  studentsmarks'
