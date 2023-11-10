@@ -1,4 +1,5 @@
 const { Joi } = require('express-validation')
+const db = require('../Utilities/dbConfig')
 
 exports.signUpSchema = {
   body: Joi.object({
@@ -8,11 +9,6 @@ exports.signUpSchema = {
     }),
     email: Joi.string().email().required()
       .regex(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
-      .custom((email)=>{
-        //  console.log('first:', email)
-        //  Check in DB if email is exist or not
-        return new Error('not...........', email)
-      })
       .messages({
         'string.empty': 'Cant be empty',
         'any.only': 'Invalid Email Format',
