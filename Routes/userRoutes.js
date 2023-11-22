@@ -1,19 +1,19 @@
 const routers = require('express').Router();
-const { validate } = require('express-validation');
 const userController = require('../Controller/userController');
 const validateUser = require('../Validation/UserValidation');
 const doesMiddlewere = require('../Middlewares/doesMiddlewere')
 
 const initialzation = () => {
-    // allGetRoutes();
+    allGetRoutes();
     allPostRoutes();
 }
 
 const allGetRoutes = () => {
+    routers.get('/email', userController.sendMail)
 }
 
-const allPostRoutes = () => { 
-    routers.post('/signup',validate(validateUser?.signUpSchema), doesMiddlewere.userExist, userController.userDetail)
+const allPostRoutes = () => {
+    routers.post('/signup', validateUser.validateUser(), doesMiddlewere.verifyValidation, userController.userDetail)
 }
 
 const patchRoutes = () => { }

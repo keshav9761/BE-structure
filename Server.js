@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const Routers = require('./Routes/userRoutes');
 const dbConfig = require('./Utilities/dbConfig');
-const { ValidationError } = require('express-validation')
+const { ExpressValidator } = require('express-validator')
 
 const app = express()
 
@@ -46,12 +46,13 @@ const config404 = () => {
 
 const configGlobalHandler = () => {
     app.use(function(err, req, res, next) {
-        if (err instanceof ValidationError) {
+        console.log("globalERR", err)
+        if (err instanceof ExpressValidator) {
           const collectErr = err?.details?.body?.map((v)=> v?.message);
-          return res.status(err.statusCode).send({errMsg: collectErr?.at(0)})
+          return res.send({errMsg: collectErr?.at(0)})
         }
         // next({statusCode: 400, error: "Errors"})
-        return res.status(err?.statusCode).send({errMsg: err?.error})
+        return res.send({errMsg: err?.errors, status: err?.statusCode})
       })
  }
 
