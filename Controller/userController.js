@@ -15,8 +15,8 @@ const mailSender = require('../Utilities/mailSenderConfig')
 // }
 
 const sendMail = async (req, res) => {
-  const result = await mailSender('abbhishekbbhardwaj@gmail.com', "ONE", "<h1> Body </h1>");
-  res.send(result);
+    const result = await mailSender('keshavsingh9761631289@gmail.com', "Ram Ram ji ", "<h1>testing mail </h1>");
+    res.send(result);
 }
 
 const userDetail = (req, res, next) => {
