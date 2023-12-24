@@ -1,6 +1,9 @@
 const nodemailer = require('nodemailer');
+const { createJwtToken } = require('./jwtConfig');
+const BASE_URL = "http://localhost:9000/users/verifyaccount"
 
-const mailSender = async (email, title, body) => {
+const mailSender = async (email, title, otp) => {
+
   try {
     // Create a Transporter to send emails
     let transporter = nodemailer.createTransport({
@@ -10,21 +13,26 @@ const mailSender = async (email, title, body) => {
       auth: {
         type: "OAuth2",
         user: "keshavtomar53@gmail.com",
-        accessToken: "ya29.a0AfB_byBSx1NhmEEXS6e8LUowkGp-QdWKel6fgjLkJFFEsUh68e8DwnspK27k666W8WohO1vlolD4BH28gpKgVOMl6adRgkGaMQXYTadi1kttDjewmWTueO9FN0KyzkLq7wxfBHth6wAGH4P3iYRT8V_MAGdhMM4-mCCzaCgYKARcSARESFQHGX2MifkVt7tjiA9cTRvc233zo2g0171"
+        accessToken: "ya29.a0AfB_byBiDD9ZkorCj_Nza--NMEFebc66-bh9xd98Xox2mOAgO5zNxJkrjxeccKbqRlkRFSSodydTy_tmlxgBsz9ZPpqFEt7ImZyUi5sEAi4PYCiZa4Cl2LPhL5zZfBoj93GyOiF_NR0VQMFOQZbxtj4bNJT_ntDwZ_WVaCgYKAe8SARESFQHGX2MikNHSH6tbwbPPD5jR82B4iQ0171"
       },
     });
 
+    // Creat JWT OTP
+    const jwtOtp = await createJwtToken(otp, 60 * 60)
+
     // Send emails to users
     let info = await transporter.sendMail({
-      from: 'ram@gmail.com',
+      from: 'keshavtomar53@gmail.com',
       to: email,
-      subject: title,
-      html: body,
+      subject: 'welcome In my school',
+      html: `<a href="${BASE_URL}/${jwtOtp}"> Verify Account</a>`,
     });
-    console.log("Email info: ", info);
     return info;
   } catch (error) {
-    console.log(error.message);
+    console.log("@@@@@@@", error);
   }
 };
 module.exports = mailSender;
+
+
+

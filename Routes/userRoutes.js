@@ -9,11 +9,11 @@ const initialzation = () => {
 }
 
 const allGetRoutes = () => {
-    routers.get('/email', userController.sendMail)
+    routers.get('/verifyaccount/:jwtOtp', userController.verifySingup)
 }
 
 const allPostRoutes = () => {
-    routers.post('/signup', validateUser.validateUser(), doesMiddlewere.verifyValidation, userController.userDetail)
+    routers.post('/signup', validateUser.validateUser(), doesMiddlewere.verifyValidation, userController.signupUser)
 }
 
 const patchRoutes = () => { }

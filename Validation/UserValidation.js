@@ -15,7 +15,7 @@ const dbConfig = require('../Utilities/dbConfig')
 // ])
 
 exports.validateUser = () => ([
-  check('userName').notEmpty().withMessage('Please enter the User Name'),
+  check('username').notEmpty().withMessage('Please enter the User Name'),
   check('email').isEmail().withMessage('Please enter the unique email'),
   check('password').notEmpty().isLength({ min: 6 }).withMessage('Please enter 6 letter of the strong password')
 ]);

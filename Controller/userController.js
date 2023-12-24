@@ -1,9 +1,9 @@
 const dbConfig = require('../Utilities/dbConfig')
 const jwtConfig = require('../Utilities/jwtConfig')
 const { validationResult } = require('express-validator')
-const bcrypt = require('bcrypt')
 const mailSender = require('../Utilities/mailSenderConfig')
-
+const { generateHash } = require('../Utilities/bcryptPwd');
+const { generateOTP2 } = require('../Utilities/otpGen');
 
 // const userLogin = (req, res) => {
 //     jwtConfig.createJwtToken(req.userInfo,(err, token) => {
@@ -14,19 +14,31 @@ const mailSender = require('../Utilities/mailSenderConfig')
 //     })
 // }
 
-const sendMail = async (req, res) => {
-    const { emailTo, subject, msg } = req.body;
-    const result = await mailSender(emailTo, subject, msg);
-    res.send(result);
+const verifySingup = async (req, res) => {
+    const { jwtOtp } = req.params;
+    const decode = await jwtConfig.decodeJwtToken(jwtOtp);
+
+    const sql = `UPDATE users SET ? WHERE email='${decode?.email}' AND otp=${decode?.otp}`;
+    // DB email 
+    dbConfig.query(sql, {verified: false}, (err, result) => {
+        if (err) {
+            console.log("error", err);
+        }
+        if(result?.affectedRows) {
+            res.send({ msg: "Verified Account Successfully", result })
+        } else {
+            res.send({ msg: "Invalid Token", result })
+
+        }
+    })
 }
 
-const userDetail = (req, res, next) => {
-    console.log(">>>>>>>>>", req.body)
-    const { userName, email, password, date } = req.body;
+const signupUser = (req, res, next) => {
+    const { username, email, password, date } = req.body;
 
     //check email
     const mailCheck = `SELECT * FROM users WHERE email='${email}'`;
-    dbConfig.query(mailCheck, (err, result) => {
+    dbConfig.query(mailCheck, async (err, result) => {
 
         if (err) { console.log("Email Verification", err) }
 
@@ -35,27 +47,40 @@ const userDetail = (req, res, next) => {
             next({ errors: 'Email already exists', statusCode: 400 })
             return;
         }
-        // bcrypt of password
-        bcrypt.hash(password, 5, (err, hash) => {
-            if (err) {
-                return res.status(500).send({ error: 'Internal server error' })
-            }
-            //insert data into DB
 
-            const sql = `INSERT INTO users SET ?`
-            const signupData = {
-                username: userName,
-                password: hash,
-                email: email,
-                date: new Date()
-            };
-            dbConfig.query(sql, signupData, (err, result) => {
-                if (err) {
-                    console.log("error-signup", err);
-                }
-                res.send({ msg: "you are registered", result })
-            })
+        // ---------- Create New User ----------------------------
+        // bcrypt of password
+        const hashPwd = await generateHash(password);
+        // generate OTP
+        const otp = generateOTP2();
+        //  Send Email 
+        const emailStatus = await mailSender(email, 'Verify Account', { otp, email });
+        
+        const isDelivered = emailStatus?.accepted?.at(0);
+
+        if (!isDelivered) {
+            // console.log(emailStatus);
+            return next({ errors: 'Unable to send email', statusCode: 500 })
+        }
+
+        //insert data into DB
+        const sql = `INSERT INTO users SET ?`
+        const signupData = {
+            username,
+            password: hashPwd,
+            email,
+            date: new Date(),
+            otp,
+            verified: false
+        };
+        dbConfig.query(sql, signupData, (err, result) => {
+            if (err) {
+                console.log("Signup:", err);
+            }
+            res.send({ msg: "Verify your email entering token sending to your email Id", result })
         })
     })
+
+
 }
-module.exports = { userDetail, sendMail }
+module.exports = { signupUser, verifySingup }
