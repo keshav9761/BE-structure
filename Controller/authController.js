@@ -1,6 +1,5 @@
 const dbConfig = require('../Utilities/dbConfig')
 const jwtConfig = require('../Utilities/jwtConfig')
-const { validationResult } = require('express-validator')
 const mailSender = require('../Utilities/mailSenderConfig')
 const { generateHash } = require('../Utilities/bcryptPwd');
 const { generateOTP2 } = require('../Utilities/otpGen');
@@ -20,11 +19,11 @@ const verifySingup = async (req, res) => {
 
     const sql = `UPDATE users SET ? WHERE email='${decode?.email}' AND otp=${decode?.otp}`;
     // DB email 
-    dbConfig.query(sql, {verified: false}, (err, result) => {
+    dbConfig.query(sql, { verified: false }, (err, result) => {
         if (err) {
             console.log("error", err);
         }
-        if(result?.affectedRows) {
+        if (result?.affectedRows) {
             res.send({ msg: "Verified Account Successfully", result })
         } else {
             res.send({ msg: "Invalid Token", result })
@@ -55,7 +54,7 @@ const signupUser = (req, res, next) => {
         const otp = generateOTP2();
         //  Send Email 
         const emailStatus = await mailSender(email, 'Verify Account', { otp, email });
-        
+
         const isDelivered = emailStatus?.accepted?.at(0);
 
         if (!isDelivered) {
@@ -83,4 +82,8 @@ const signupUser = (req, res, next) => {
 
 
 }
-module.exports = { signupUser, verifySingup }
+
+const signinUser = (req, res) => {
+        console.log('controller:-', req)
+}
+module.exports = { signupUser, verifySingup, signinUser }

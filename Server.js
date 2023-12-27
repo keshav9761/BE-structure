@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const Routers = require('./Routes/userRoutes');
+const Routers = require('./Routes/authRoutes');
 const dbConfig = require('./Utilities/dbConfig');
 const { ExpressValidator } = require('express-validator')
 

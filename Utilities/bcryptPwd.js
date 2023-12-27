@@ -18,5 +18,19 @@ const generateHash = (password) => {
 
 }
 
+const compaireBcrypt = (password, hashedPassword) => {
+    return new Promise((reslove, reject) => {
+        bcrypt.compare(password, hashedPassword, (err, isMatch) => {
+            if (err) {
+                reject(err);
+            }
+            reslove(isMatch)
+        })
+    })
 
-module.exports = { generateHash }
+
+
+}
+
+
+module.exports = { generateHash, compaireBcrypt }
