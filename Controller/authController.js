@@ -83,7 +83,9 @@ const signupUser = (req, res, next) => {
 
 }
 
-const signinUser = (req, res) => {
-        console.log('controller:-', req)
+const signinUser = async (req, res) => {
+    const { id, ...rest } = req.userInfo || {};
+    const token = await jwtConfig.createJwtToken({ id });
+    res.status(201).json({ user:rest, token });
 }
 module.exports = { signupUser, verifySingup, signinUser }

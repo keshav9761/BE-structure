@@ -23,27 +23,33 @@ exports.validateUser = () => ([
 // -------------------------------login---------------------------
 
 exports.signinUser = () => ([
-  check('email').custom((email, { req }) => {
+  check('email').custom(async (email, { req }) => {
+    
+    // To fetch data from DB
+    const isAccountExist = new Promise((resolve) => {
+      const sql = `SELECT * FROM users WHERE email='${email}'`;
+      db.query(sql, async (err, result) => {
+        if (err) { console.log("Email Verification", err) }
+         resolve(result)
+      })
+    }) 
 
-    const sql = `SELECT * FROM users WHERE email='${email}'`;
+    const accountDetails = await isAccountExist;
 
-    db.query(sql, async (err, result) => {
-      
-      if (err) { console.log("Email Verification", err) }
+    if (accountDetails && accountDetails.length) { // verify email
 
-      if (result && result.length) { // verify email
+      const userInfo = accountDetails?.at(0);
 
-        const userInfo = result?.at(0);
-
-        const pwd = req?.body?.password;
-        const isPwdMatched = await compaireBcrypt(pwd, userInfo?.password);
-        if(isPwdMatched) { // password verify 
-          req.userInfo = userInfo; // for controller
-          return false
-        }
-        // return false
+      const pwd = req?.body?.password;
+      const isPwdMatched = await compaireBcrypt(pwd, userInfo?.password);
+      if(isPwdMatched) { // password verify 
+        delete userInfo.otp;
+        delete userInfo.password;
+        req.userInfo = userInfo; // for controller
+        return true
       }
-    })
-    // return false;
+      throw new Error('Invalid Credintials!');
+    }
+
   }),
 ])

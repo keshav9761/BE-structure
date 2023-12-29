@@ -4,7 +4,7 @@ const DEFAULT_EXPIRATION = "1d"
 // "120" is equal to "120ms"
 // "10h", "7d"
 exports.createJwtToken = (info, expiresIn = DEFAULT_EXPIRATION) => {
-
+    // info == Object
     return new Promise((resolve, reject) => {
         jwt.sign(info, SECREAT_KEY, { expiresIn }, (err, token) => {
             if (err) {
