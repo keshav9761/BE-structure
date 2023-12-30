@@ -88,4 +88,5 @@ const signinUser = async (req, res) => {
     const token = await jwtConfig.createJwtToken({ id });
     res.status(201).json({ user:rest, token });
 }
+
 module.exports = { signupUser, verifySingup, signinUser }
