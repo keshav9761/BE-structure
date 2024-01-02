@@ -23,6 +23,7 @@ const configCors = () => {
 const configParser = () => {
     app.use(express.json())
     // app.use(express.urlencoded({extended: true}))
+    app.set('view engine', 'ejs');
 }
 
 const configDatabase = () => {
@@ -52,7 +53,7 @@ const configGlobalHandler = () => {
           return res.send({errMsg: collectErr?.at(0)})
         }
         // next({statusCode: 400, error: "Errors"})
-        return res.send({errMsg: err?.errors, status: err?.statusCode})
+        return res.status(400).send({errMsg: err?.errors, status: err?.statusCode})
       })
  }
 

@@ -3,17 +3,7 @@ const { check, body } = require('express-validator');
 const dbConfig = require('../Utilities/dbConfig');
 const { compaireBcrypt } = require('../Utilities/bcryptPwd');
 
-// exports.signUpSchema = () => ([
-//   body('password').isLength({ min: 6 }).withMessage('6 words ka daal ba'),
-//   body('email').custom(async (email, req) => {
-//     try {
-//       const rows = await dbConfig.query('SELECT * FROM users WHERE email = ?', [email]) || [];
-//       return rows?.length === 0; // Return true if email is unique, false otherwise
-//     } catch (error) {
-//       throw new Error('Database error');
-//     }
-//   })
-// ])
+
 
 exports.validateUser = () => ([
   check('username').notEmpty().withMessage('Please enter the User Name'),
@@ -24,15 +14,15 @@ exports.validateUser = () => ([
 
 exports.signinUser = () => ([
   check('email').custom(async (email, { req }) => {
-    
+
     // To fetch data from DB
     const isAccountExist = new Promise((resolve) => {
       const sql = `SELECT * FROM users WHERE email='${email}'`;
       db.query(sql, async (err, result) => {
         if (err) { console.log("Email Verification", err) }
-         resolve(result)
+        resolve(result)
       })
-    }) 
+    })
 
     const accountDetails = await isAccountExist;
 
@@ -42,7 +32,7 @@ exports.signinUser = () => ([
 
       const pwd = req?.body?.password;
       const isPwdMatched = await compaireBcrypt(pwd, userInfo?.password);
-      if(isPwdMatched) { // password verify 
+      if (isPwdMatched) { // password verify 
         delete userInfo.otp;
         delete userInfo.password;
         req.userInfo = userInfo; // for controller
@@ -53,3 +43,26 @@ exports.signinUser = () => ([
 
   }),
 ])
+// -------------------------------forgetpwd--------------------------
+
+exports.forgetPwd = () => ([
+  check('email').isEmail()
+    .withMessage('Please enter valid email')
+    .custom(async (email, { req }) => {
+      const isUserExist = new Promise((resolve) => {
+        const sql = `SELECT * FROM users WHERE email='${email}'`;
+        db.query(sql, async (err, result) => {
+          if (err) { console.log("Email Verification", err) }
+          resolve(result)
+        })
+      })
+      let userInfo = await isUserExist;
+      if (userInfo && userInfo?.length) {
+        req.userInfo = userInfo?.at(0);
+        return true;
+      } else {
+        throw new Error("This Email does not exist.")
+      }
+
+    })
+]) 

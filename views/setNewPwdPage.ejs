@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <center style="margin-top: 5rem;">
+        <label for="name">Password:</label>
+        <input type="password" name="password"> <br /><br />
+        <label for="email">Confirm Password:</label>
+        <input type="text" name="cpassword"> <br /> <br />
+        <button onclick="sendData()">Submit</button>
+    </center>
+    <script>
+        const token = `<%= data %>`;
+        function sendData(e) {
+            const password = document.querySelector('input[name="password"]').value;
+            const cpassword = document.querySelector('input[name="cpassword"]').value;
+            fetch(`http://localhost:9000/users/newResetPwd/${token}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({password, cpassword }),
+            }).then((res) => res.json()).then((result) => {
+                    console.log(result)
+                    alert(result.msg)
+            })
+        }
+    </script>
+</body>
+</html>

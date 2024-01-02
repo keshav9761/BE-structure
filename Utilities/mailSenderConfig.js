@@ -13,7 +13,7 @@ const mailSender = async (email, title, otp) => {
       auth: {
         type: "OAuth2",
         user: "keshavtomar53@gmail.com",
-        accessToken: "ya29.a0AfB_byAgGLQuZEsNymMlWocz-zQdA09ibLaBNoSCeYHpEtqUplMwVIa7TR23W2xJelILxkrpeFqQIbDXz8FZ7vO4hI1hOWZgQst3KO7TgLd1ywCcbo5b75uCYQ-m8AA_iXNFadQBdHhQ24PsSu4tKrOvHOAW_ejZkGUdaCgYKAR8SARESFQHGX2MizttIK2ZWb4cat03h_VPwbw0171"
+        accessToken: "ya29.a0AfB_byAwA8SUB96AtpCYuEJ5pQXUISF5wtDNGFO__BNbdBdRGo4HxtgRETRS2b5jcmQqWPlNYplJ-ozBnfpZWH9UoQpTSQz6vcNJpU8Bm1lFt2QSQu2C-r8KkG5rlqIeMSe8aYuEvRB-PTWW4jxey08lA4hA-IYO0SDaaCgYKAZYSARESFQHGX2MictWeZqwI9IlaxyZd7oD92g0171"
       },
     });
 
@@ -25,13 +25,15 @@ const mailSender = async (email, title, otp) => {
       from: 'keshavtomar53@gmail.com',
       to: email,
       subject: 'welcome In my school',
-      html: `<a href="${BASE_URL}/${jwtOtp}"> Verify Account</a>`,
+      // html: `<a href="${BASE_URL}/${jwtOtp}"> Verify Account</a>`,
+      html: `<a href="http://localhost:9000/users/changePwdForm/${jwtOtp}"> Verify Account</a>`
     });
     return info;
   } catch (error) {
     console.log("@@@@@@@", error);
   }
 };
+
 module.exports = mailSender;
 
 

@@ -86,7 +86,68 @@ const signupUser = (req, res, next) => {
 const signinUser = async (req, res) => {
     const { id, ...rest } = req.userInfo || {};
     const token = await jwtConfig.createJwtToken({ id });
-    res.status(201).json({ user:rest, token });
+    res.status(201).json({ user: rest, token });
 }
 
-module.exports = { signupUser, verifySingup, signinUser }
+const forgetPassword = async (req, res, next) => {
+    const { id, email } = req.userInfo || {}
+    // console.log(">>>>>>>>>", { id, email })
+    const otp = generateOTP2();
+    //  Send Email 
+    const emailStatus = await mailSender(email, 'Verify Account', { otp, id });
+
+    const isDelivered = emailStatus?.accepted?.at(0);
+
+    if (!isDelivered) {
+        // console.log(emailStatus);
+        return next({ errors: 'Unable to send email', statusCode: 500 })
+    }
+    const sql = `UPDATE users SET ? WHERE id='${id}'`
+    dbConfig.query(sql, { otp }, (err, result) => {
+        if (err) {
+            return next({ errors: "Error in updating OTP" });
+        } else {
+            return res.send({ msg: 'Email has been sent successfully' });
+        }
+    })
+}
+
+const resetPassword = async (req, res) => {
+    const { jwtToken } = req.params;
+    // const decode = await jwtConfig.decodeJwtToken(jwtToken);
+
+    // const sql = `SELECT * FROM users WHERE id='${decode?.id}' AND otp=${decode?.otp}`;
+    // // DB email 
+    // dbConfig.query(sql, { verified: false }, (err, result) => {
+    //     if (err) {
+    //         console.log("error", err);
+    //     }
+
+    //     if (result?.length) {
+    res.render('setNewPwdPage', { data: jwtToken })
+    //     } else {
+    //         res.send({ msg: "Invalid Token", result })
+    //     }
+    // })
+}
+
+const newRestPwd = async (req, res) => {
+    const { jwtToken } = req.params || {};
+    const { password } = req.body || {}
+    const hashPwd = await generateHash(password);
+
+    const decode = await jwtConfig.decodeJwtToken(jwtToken);
+    const { otp, id } = decode || {}
+    const sql = `UPDATE users SET ? WHERE id='${id}' AND otp='${otp}'`
+    dbConfig.query(sql, { password: hashPwd }, (err, result) => {
+        if (err) {
+            return next({ errors: "Error in updating OTP" });
+        } else {
+            return res.send({ msg: 'password updated successfully' });
+        }
+    })
+    // console.log("----------->", { body: req.body, decode });
+}
+
+
+module.exports = { signupUser, verifySingup, signinUser, forgetPassword, resetPassword, newRestPwd }
