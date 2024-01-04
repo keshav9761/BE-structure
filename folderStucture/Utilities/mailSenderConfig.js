@@ -13,7 +13,7 @@ const mailSender = async (email, title, otp) => {
       auth: {
         type: "OAuth2",
         user: "keshavtomar53@gmail.com",
-        accessToken: "ya29.a0AfB_byAwA8SUB96AtpCYuEJ5pQXUISF5wtDNGFO__BNbdBdRGo4HxtgRETRS2b5jcmQqWPlNYplJ-ozBnfpZWH9UoQpTSQz6vcNJpU8Bm1lFt2QSQu2C-r8KkG5rlqIeMSe8aYuEvRB-PTWW4jxey08lA4hA-IYO0SDaaCgYKAZYSARESFQHGX2MictWeZqwI9IlaxyZd7oD92g0171"
+        accessToken: "ya29.a0AfB_byDyZnzibh5D5zyrjZeClnytQpBD5Ir81zc0IG8FfwUqPa3MphOCIFlaxscK8nm_-J37fh7bjvA_SYCUCBPXzcISI6m5UwGu0EHgQlc30ehvq4e_QfSxxc4XTRf2b83dpaBeXBzRCH2irrfo-5MVnNbst3ols2tHaCgYKATESARESFQHGX2Mi9CL5RIlUL_Dnw6PO47FjKQ0171"
       },
     });
 
