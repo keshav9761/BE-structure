@@ -8,13 +8,18 @@ class RootServices {
     constructor() {
         // REQUEST
         axios.interceptors.request.use((config) => {
-            console.log("Starting Request...", config);
+            console.log("Req------->", config);
+            config.headers = {
+                'Authorization' : `Bearer ${sessionStorage.getItem('token')}`
+            }
+            document.getElementById('global-loader-id').style.display = "block";
             return config;
         })
 
         // RESPONSE 
         axios.interceptors.response.use((config) => {
-            console.log("response", config)
+            console.log("Res------->", config)
+            document.getElementById('global-loader-id').style.display = "none";
             return config;
         })
     }
@@ -53,6 +58,8 @@ class RootServices {
         }
         catch (err) {
             console.log("postREQ", err)
+            document.getElementById('global-loader-id').style.display = "none";
+            return err
         }
     }
 }

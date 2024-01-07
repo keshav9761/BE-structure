@@ -38,8 +38,8 @@ exports.signinUser = () => ([
         req.userInfo = userInfo; // for controller
         return true
       }
-      throw new Error('Invalid Credintials!');
     }
+    throw new Error('Invalid Credintials!');
 
   }),
 ])

@@ -24,9 +24,9 @@ const verifySingup = async (req, res) => {
             console.log("error", err);
         }
         if (result?.affectedRows) {
-            res.send({ msg: "Verified Account Successfully", result })
+            res.status(200).send({ statusText: 'Success', status: 200, msg: "Verified Account Successfully", data: result })
         } else {
-            res.send({ msg: "Invalid Token", result })
+            res.status(400).send({ statusText: 'Bad Request', status: 400, msg: "Invalid Token", data: {} })
 
         }
     })
@@ -76,7 +76,12 @@ const signupUser = (req, res, next) => {
             if (err) {
                 console.log("Signup:", err);
             }
-            res.send({ msg: "Verify your email entering token sending to your email Id", result })
+            res.status(201).send({
+                statusText: 'Created',
+                status: 201,
+                msg: "Verify your email entering token sending to your email Id",
+                data: result
+            })
         })
     })
 
@@ -86,7 +91,12 @@ const signupUser = (req, res, next) => {
 const signinUser = async (req, res) => {
     const { id, ...rest } = req.userInfo || {};
     const token = await jwtConfig.createJwtToken({ id });
-    res.status(201).json({ user: rest, token });
+    res.status(200).send({
+        statusText: 'Success',
+        status: 200,
+        msg: 'Login Successfully',
+        data: { user: rest, token }
+    });
 }
 
 const forgetPassword = async (req, res, next) => {

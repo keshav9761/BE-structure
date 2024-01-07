@@ -1,11 +1,12 @@
 const express = require('express');
 const cors = require('cors');
-const Routers = require('./Routes/authRoutes');
+const authRouters = require('./Routes/authRoutes');
+const userRouters = require('./Routes/userRoutes');
 const dbConfig = require('./Utilities/dbConfig');
-const { ExpressValidator } = require('express-validator')
+const { ExpressValidator } = require('express-validator');
 
 const app = express()
-
+const ws = require('express-ws')(app);
 const initializaton = () => {
     configCors();
     configParser();
@@ -36,7 +37,13 @@ const configDatabase = () => {
 
 //http://localhost:9000/users/---
 const configRoutes = () => {
-    app.use('/users', Routers)
+    app.use('/users', authRouters)
+    // app.use('/ws', userRouters)
+    app.ws('/ws', (s, req) => {
+        console.error('websocket connection');
+        for (var t = 0; t < 3; t++)
+          setTimeout(() => s.send('message from server', ()=>{}), 1000*t);
+      });
 }
 
 const config404 = () => {
