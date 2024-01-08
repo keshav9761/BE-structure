@@ -1,4 +1,4 @@
-// const routers = require('express').Router();
+const express = require('express');
 
 // const initialzation = () => {
 //     allGetRoutes();
@@ -14,3 +14,11 @@
 
 // initialzation();
 // module.exports = routers;
+
+var router = express.Router();
+
+router.ws('/echo', function(ws, req) {
+  ws.on('message', function(msg) {
+    ws.send(msg);
+  });
+});

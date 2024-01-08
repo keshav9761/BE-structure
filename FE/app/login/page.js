@@ -11,6 +11,8 @@ import { toast } from 'react-toastify'
 export default function page() {
     const route = useRouter();
     const [datasource, setDataSource] = useState('')
+    const [screen, setScreen] = useState('New')
+
     const onHandleInputs = (e) => {
         setDataSource((pre) => ({ ...pre, [e.target.name]: e.target.value }))
     }
@@ -28,9 +30,24 @@ export default function page() {
             toast.info("Username or Password is incorrect")
         }
     }
+
+    React.useEffect(() => {
+        var s = new WebSocket('ws://localhost:9000/echo');
+        s.addEventListener('error', (m) => { console.log("error"); });
+        s.addEventListener('open', (m) => { console.log("websocket connection open"); });
+        s.addEventListener('message', (m) => { 
+            setScreen(m.data)
+         });
+    }, [])
+    
+
+
+
+
     return (
         <Paper sx={{ p: 3, mx: 50, my: 10 }}>
             <center><h1 style={{ fontWeight: "bold" }}>LOGIN ACCOUNT</h1></center>
+            <h1>{screen}</h1>
             <Grid container spacing={3}>
                 <Grid item xs={12} md={12}>
                     <TextField

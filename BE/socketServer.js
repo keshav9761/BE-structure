@@ -1,18 +1,18 @@
-// const path = require('path');
-// const app = require('express')();
-// const ws = require('express-ws')(app);
+const express = require('express');
+const app = express();
+const webSocket = require('express-ws');
+webSocket(app)
 
-// app.get('/', (req, res) => {
-//   console.error('express connection');
-//   res.sendFile(path.join(__dirname, 'ws.html'));
-// });
 
-// app.ws('/', (s, req) => {
-//   console.error('websocket connection');
-//   for (var t = 0; t < 3; t++)
-//     setTimeout(() => s.send('message from server', ()=>{}), 1000*t);
-// });
+let count = 1;
+app.ws('/echo', (ws, req) => {
+    console.error('websocket connection');
+    // for (var t = 0; t < 50; t++)
+      setInterval(() => ws.send(`message from server ${count ++ }`), 1000);
+  });
 
-// module.exports = app
+module.exports = app
 
-// app.listen(3001, () => console.error('listening on http://localhost:3001/'));
+app.listen(9001, () => {
+    console.error('SOCKET Server is running on port http://localhost:9001')
+});
