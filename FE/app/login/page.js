@@ -11,7 +11,7 @@ import { toast } from 'react-toastify'
 export default function page() {
     const route = useRouter();
     const [datasource, setDataSource] = useState('')
-    const [screen, setScreen] = useState('New')
+    const [msgs, setMsgs] = useState('New');
 
     const onHandleInputs = (e) => {
         setDataSource((pre) => ({ ...pre, [e.target.name]: e.target.value }))
@@ -25,19 +25,26 @@ export default function page() {
             route.replace('/dashboard');
         }
         else if (res?.response?.data?.errMsg && res?.response?.data.errMsg?.length ) {
-            toast.info(res.response.data.errMsg[0]['msg'])
+            toast.info(res.response.data.errMsg[0].msg)
         } else {
             toast.info("Username or Password is incorrect")
         }
     }
 
     React.useEffect(() => {
-        var s = new WebSocket('ws://localhost:9000/echo');
-        s.addEventListener('error', (m) => { console.log("error"); });
-        s.addEventListener('open', (m) => { console.log("websocket connection open"); });
-        s.addEventListener('message', (m) => { 
-            setScreen(m.data)
+        var ws = new WebSocket('ws://localhost:9001/echo');
+        
+        ws.addEventListener('error', (m) => { console.log("error"); });
+
+        ws.addEventListener('open', (m) => { 
+            ws.send('Start Counter')
+            console.log("websocket connection open"); 
+        });
+
+        ws.addEventListener('message', (m) => { 
+            setMsgs(m.data)
          });
+
     }, [])
     
 
@@ -47,7 +54,7 @@ export default function page() {
     return (
         <Paper sx={{ p: 3, mx: 50, my: 10 }}>
             <center><h1 style={{ fontWeight: "bold" }}>LOGIN ACCOUNT</h1></center>
-            <h1>{screen}</h1>
+            <h1>{msgs}</h1>
             <Grid container spacing={3}>
                 <Grid item xs={12} md={12}>
                     <TextField

@@ -1,8 +1,9 @@
 const dbConfig = require('../Utilities/dbConfig')
 const jwtConfig = require('../Utilities/jwtConfig')
-const mailSender = require('../Utilities/mailSenderConfig')
+const mailSenderConfig = require('../Utilities/mailSenderConfig');
 const { generateHash } = require('../Utilities/bcryptPwd');
 const { generateOTP2 } = require('../Utilities/otpGen');
+const { mailSender, HTML} = mailSenderConfig;
 
 // const userLogin = (req, res) => {
 //     jwtConfig.createJwtToken(req.userInfo,(err, token) => {
@@ -24,7 +25,7 @@ const verifySingup = async (req, res) => {
             console.log("error", err);
         }
         if (result?.affectedRows) {
-            res.status(200).send({ statusText: 'Success', status: 200, msg: "Verified Account Successfully", data: result })
+            res.status(200).send(`<b style="color: green"> Account Verified Successfully </b`);
         } else {
             res.status(400).send({ statusText: 'Bad Request', status: 400, msg: "Invalid Token", data: {} })
 
@@ -53,7 +54,7 @@ const signupUser = (req, res, next) => {
         // generate OTP
         const otp = generateOTP2();
         //  Send Email 
-        const emailStatus = await mailSender(email, 'Verify Account', { otp, email });
+        const emailStatus = await mailSender(email, HTML.VERIFY_ACCOUNT_LINK_HTML, { otp, email });
 
         const isDelivered = emailStatus?.accepted?.at(0);
 
@@ -104,7 +105,7 @@ const forgetPassword = async (req, res, next) => {
     // console.log(">>>>>>>>>", { id, email })
     const otp = generateOTP2();
     //  Send Email 
-    const emailStatus = await mailSender(email, 'Verify Account', { otp, id });
+    const emailStatus = await mailSender(email, HTML.CHANGE_PWD_FORM_LINK_HTML, { otp, id });
 
     const isDelivered = emailStatus?.accepted?.at(0);
 
@@ -134,7 +135,7 @@ const resetPassword = async (req, res) => {
     //     }
 
     //     if (result?.length) {
-    res.render('setNewPwdPage', { data: jwtToken })
+    res.render('setNewPwdPage', { data: jwtToken, baseurl: global?.GLOBAL_BASEURL })
     //     } else {
     //         res.send({ msg: "Invalid Token", result })
     //     }
