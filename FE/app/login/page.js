@@ -32,7 +32,7 @@ export default function page() {
     }
 
     React.useEffect(() => {
-        var ws = new WebSocket('ws://localhost:9001/echo');
+        var ws = new WebSocket('ws://a9d5-103-69-39-24.ngrok-free.app/echoLocation');
         
         ws.addEventListener('error', (m) => { console.log("error"); });
 
@@ -42,7 +42,8 @@ export default function page() {
         });
 
         ws.addEventListener('message', (m) => { 
-            setMsgs(m.data)
+            ws.send('Start Counter', m)
+            setMsgs(m)
          });
 
     }, [])

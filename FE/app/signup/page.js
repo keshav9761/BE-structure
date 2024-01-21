@@ -24,7 +24,7 @@ export default function page() {
         }
         else {
             const err = res?.response?.data?.errMsg;
-            toast.error(Array.isArray(err) ? err[0]['msg'] : err)
+            toast.error(Array.isArray(err) ? err[0]?.msg : err)
         } 
     }
     return (
